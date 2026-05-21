@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch
+jobs:
+  hybrid_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run a command in ubuntu vm
+        run: echo "this step run on ubuntu VM"
+
+      - name: run inside an alpine container
+        uses: docker://alpine:3.14
+        with:
+          entrypoint: /bin/sh
+          args: |
+            -c "echo this step runs inside alpine container"
+
+  dockerized_job:  # for only private repo images you can't run individual step it must be the whole job run in the container
+    runs-on: ubuntu-latest
+    container:
+      image: seifadel22/devops_path:master-f5fe8fc
+      credentials:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    steps:
+      - name: print message
+        run: echo "this whole job run on ubuntu VM"
